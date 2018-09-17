@@ -7,19 +7,31 @@ import time
 You Need mms, numpy, and opencv-python
 '''
 
-# (X, Y, Width, Height) Box to capture
-mon = {'top': 160, 'left': 160, 'width': 600, 'height': 400}
 
-sct = mss()
+def init():
+    pass
 
-while 1:
-    start_time = time.time()
-    img = np.array(sct.grab(mon))
-    cv2.imshow('test', img)
-    #Press 'Q' to quit
-    if cv2.waitKey(25) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
-        break
-    # Print the frame rate (I get about 20 fps)
-    #print (1 / (time.time() - start_time))
 
+def run():
+    # (X, Y, Width, Height) Box to capture
+    mon = {'top': 145, 'left': 0, 'width': 1920, 'height': 875}
+
+    sct = mss()
+
+    while 1:
+        start_time = time.time()
+        img = np.array(sct.grab(mon))
+        cv2.imshow('test', img)
+        #Press 'Q' to quit
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+        # Print the frame rate (I get about 20 fps)
+        print (1 / (time.time() - start_time))
+
+
+
+
+if __main__ == "__main__":
+    init()
+    run()
