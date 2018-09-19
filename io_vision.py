@@ -4,22 +4,29 @@ import os
 from mss import mss
 import time
 import color_thresholds as th
+import pyautogui as auto
 
 wall_color = (0, 0, 255, 0) # RGB Color
 
-def init():
-    global sct, scoreboard_mask
-    sct = mss()
+# (X, Y, Width, Height) Box to capture
+mon = {'top': 65, 'left': 0, 'width': 1920, 'height': 975}
 
+LOC_START = (950, 545 - mon['top']) # Center of Upper-Left Starting Square
+LOC_START_BUTTON = (1045, 355)
+
+def init():
+    global sct, scoreboard_mask, player_color
+    sct = mss()
     scoreboard_mask = cv2.imread(os.getcwd() + '\\' + 'scoreboard_mask.png', 0)
-    #scoreboard_mask = 255 - cv2.cvtColor(scoreboard_mask, cv2.COLOR_RGB2BGR)
-    #b_channel, g_channel, r_channel = cv2.split(scoreboard_mask)
-    #alpha_channel = np.ones(b_channel.shape, dtype=b_channel.dtype) * 50
-    #scoreboard_mask = cv2.merge((b_channel, g_channel, r_channel, alpha_channel))
+
+    # Starts Game Automatically. Comment out if you dont want your mouse to freak out lol
+    auto.moveTo(LOC_START_BUTTON)
+    auto.click()
+    time.sleep(1.75)
+    player_color = getPlayerColor()
+    print (player_color)
 
 def run():
-    # (X, Y, Width, Height) Box to capture
-    mon = {'top': 65, 'left': 0, 'width': 1920, 'height': 975}
 
     while 1:
         start_time = time.time()
@@ -37,6 +44,8 @@ def run():
         indices = np.where(wall_mask==0)
         result[indices[0], indices[1], :] = wall_color # Red Walls
 
+        cv2.circle(result, LOC_START, 3, (0, 0, 255), -1)
+
         cv2.imshow('Example', result)
 
         
@@ -47,7 +56,14 @@ def run():
         # Print the frame rate (I get about 20 fps)
        # print (1 / (time.time() - start_time))
 
+#Samples a box in the corner of the player's intiial 3x3 area to determine the player's color
+def getPlayerColor():
+    sample_size = 4
+    img = np.array(sct.grab(mon))
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+    sample_box = hsv[LOC_START[1]-sample_size:LOC_START[1]+sample_size, LOC_START[0]-sample_size:LOC_START[0]+sample_size]
+    return np.mean(sample_box, axis=0)[0]
 
 
 if __name__ == "__main__":
