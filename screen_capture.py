@@ -7,16 +7,14 @@ import time
 You Need mms, numpy, and opencv-python
 '''
 
-
 def init():
-    pass
+    global sct
+    sct = mss()
 
 
 def run():
     # (X, Y, Width, Height) Box to capture
     mon = {'top': 145, 'left': 0, 'width': 1920, 'height': 875}
-
-    sct = mss()
 
     while 1:
         start_time = time.time()
@@ -27,11 +25,11 @@ def run():
             cv2.destroyAllWindows()
             break
         # Print the frame rate (I get about 20 fps)
-        print (1 / (time.time() - start_time))
+       # print (1 / (time.time() - start_time))
 
 
 
 
-if __main__ == "__main__":
+if __name__ == "__main__":
     init()
     run()
