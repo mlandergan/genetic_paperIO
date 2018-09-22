@@ -32,22 +32,23 @@ def run():
 
     while 1:
         start_time = time.time()
-        #img = np.array(sct.grab(mon))
-        img = cv2.imread(os.getcwd() + '\\' + 'example_screen.png')
+        img = np.array(sct.grab(mon))
+        #img = cv2.imread(os.getcwd() + '\\' + 'example_screen.png')
+        #img = cv2.GaussianBlur(img, (29, 29), 0)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         background_mask = 255 - cv2.inRange(hsv, th.lower[th.BACKGROUND], th.upper[th.BACKGROUND])
         wall_mask = 255 - cv2.inRange(hsv, th.lower[th.WALL], th.upper[th.WALL])
         result = cv2.bitwise_and(img, img, mask=scoreboard_mask)
-        result = cv2.bitwise_and(result, result, mask=wall_mask)
         result = cv2.bitwise_and(result, result, mask=background_mask)
         #indices = np.where(wall_mask==0)
        # result[indices[0], indices[1], :] = wall_color # Red Walls
 
-        cv2.circle(result, LOC_START, 3, (0, 0, 255), -1)
+        #cv2.circle(result, LOC_START, 3, (0, 0, 255), -1)
 
-        cv2.imshow('Example', result)
+        #cv2.imshow('Example', result)
 
         state.update(result)
+       # state.evaluateGrid()
         state.showGrid()
         
         #Press 'Q' to quit
@@ -55,7 +56,7 @@ def run():
             cv2.destroyAllWindows()
             break
 
-        cv2.waitKey(0)
+        #cv2.waitKey(0)
         # Print the frame rate (I get about 20 fps)
        # print (1 / (time.time() - start_time))
 
