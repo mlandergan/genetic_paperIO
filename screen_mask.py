@@ -1,6 +1,7 @@
 import os
 import cv2
 import numpy as np
+import color_thresholds as th
 
 image_name = 'example_screen.png'
 
@@ -13,18 +14,15 @@ color_wall_lower = np.array([97, 47, 158], dtype = "uint16")
 color_wall_upper = np.array([98, 48, 158], dtype = "uint16")
 
 def run():
-    file_name = os.getcwd() + '\\' + image_name
-    img = cv2.imread(file_name)
-
+    img = cv2.imread(os.getcwd() + '\\' + 'example_screen.png')
     #img = scale_image(img, 50)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    background_mask = cv2.inRange(hsv, color_background_lower, color_background_upper)
-    wall_mask = 255 - cv2.inRange(hsv, color_wall_lower, color_wall_upper)
-
+    background_mask = 255-cv2.inRange(hsv, th.lower[th.BACKGROUND], th.upper[th.BACKGROUND])
+    wall_mask = 255 - cv2.inRange(hsv, th.lower[th.WALL], th.upper[th.WALL])
     result = cv2.bitwise_and(img, img, mask=wall_mask)
     indices = np.where(wall_mask==0)
     result[indices[0], indices[1], :] = wall_color
-   # result = cv2.bitwise_and(result, result, mask=background_mask)
+    result = cv2.bitwise_and(result, result, mask=background_mask)
 
     cv2.imshow('Example', result)
 
